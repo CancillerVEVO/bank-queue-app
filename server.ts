@@ -15,8 +15,23 @@ app.prepare().then(() => {
   const io = new Server(httpServer);
 
   io.on("connection", (socket) => {
-    // ...
+    console.log("a user connected");
+
+
+
+    socket.on("message", (msg: string) => {
+
+      console.log("message: " + msg);
+      socket.emit("messageResponse", {success: true})
+    });
   });
+
+
+  io.on("disconnect", (socket) => {
+    console.log("user disconnected");
+  });
+
+
 
   httpServer
     .once("error", (err) => {
@@ -27,3 +42,4 @@ app.prepare().then(() => {
       console.log(`> Ready on http://${hostname}:${port}`);
     });
 });
+
