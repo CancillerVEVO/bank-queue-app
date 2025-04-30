@@ -5,33 +5,37 @@ import { Server } from "socket.io";
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
-// when using middleware `hostname` and `port` must be provided below
+
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
+let queue: number[] = [];
+let currentTicket = 1;
+
 app.prepare().then(() => {
   const httpServer = createServer(handler);
-
   const io = new Server(httpServer);
 
   io.on("connection", (socket) => {
-    console.log("a user connected");
+    console.log("Client connected");
 
+    socket.emit("queueUpdated", queue);
 
+    socket.on("requestTicket", () => {
+      const ticket = currentTicket++;
+      queue.push(ticket);
+      socket.emit("ticketIssued", { ticket });
+      io.emit("queueUpdated", queue);
+    });
 
-    socket.on("message", (msg: string) => {
-
-      console.log("message: " + msg);
-      socket.emit("messageResponse", {success: true})
+    socket.on("serveNextTicket", () => {
+      const ticket = queue.shift();
+      if (ticket !== undefined) {
+        socket.emit("ticketServed", ticket);
+        io.emit("queueUpdated", queue);
+      }
     });
   });
-
-
-  io.on("disconnect", (socket) => {
-    console.log("user disconnected");
-  });
-
-
 
   httpServer
     .once("error", (err) => {
@@ -42,4 +46,3 @@ app.prepare().then(() => {
       console.log(`> Ready on http://${hostname}:${port}`);
     });
 });
-

@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
+import { SocketProvider } from "@/app/contexts/SocketContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
-  title: "Create Next App",
-  description: "Built with create-next-app",
+  title: {
+    template: "%s | SmartQueue",
+    default: "SmartQueue",
+  },
+  description: "SmartQueue is a smart queue management system that helps you manage your queues efficiently.",
 };
 
 export default function RootLayout({
@@ -24,10 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body>
+        <SocketProvider>
+          {children}
+        </SocketProvider>
       </body>
     </html>
   );
