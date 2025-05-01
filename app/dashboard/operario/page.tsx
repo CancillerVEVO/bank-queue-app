@@ -24,18 +24,18 @@ export default function Page() {
 
     return (
         <main className="flex flex-col items-center justify-center h-screen gap-4">
-        <h1 className="text-3xl font-bold">Operator Dashboard</h1>
-        <button className="bg-green-600 text-white px-4 py-2 rounded" onClick={serveNextTicket}>
-          Serve Next Ticket
-        </button>
-        {serving !== null && <p>Currently serving: <strong>{serving}</strong></p>}
-        <h2 className="mt-4 font-semibold">Current Queue:</h2>
-        <ul className="text-center">
-          {queue.map((ticket) => (
-            <li key={ticket}>Ticket {ticket}</li>
-          ))}
-        </ul>
-      </main>
+            <h1 className="text-3xl font-bold">Operator Dashboard</h1>
+            <button className="bg-green-600 text-white px-4 py-2 rounded" onClick={serveNextTicket}>
+                Serve Next Ticket
+            </button>
+            {serving !== null && <p>Currently serving: <strong>{serving}</strong></p>}
+            <h2 className="mt-4 font-semibold">Current Queue:</h2>
+            <ul className="text-center">
+                {queue.map((ticket) => (
+                    <li key={ticket}>Ticket {ticket}</li>
+                ))}
+            </ul>
+        </main>
     )
 
 }
