@@ -1,5 +1,5 @@
 {
-  "watch": ["server.ts"],
-  "exec": "ts-node --project tsconfig.server.json server.ts",
-  "ext": "js ts"
+  "watch": ["server.ts", "app/lib"],
+  "ext": "ts",
+  "exec": "ts-node --project tsconfig.server.json --require tsconfig-paths/register --require dotenv/config server.ts"
 }

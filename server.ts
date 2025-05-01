@@ -1,6 +1,9 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
+import { Events } from "@/app/lib/socket-events";
+import { createTicket, serveNextTicket } from "@/app/lib/actions";
+import { getQueue } from "@/app/lib/data";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -17,22 +20,23 @@ app.prepare().then(() => {
   const io = new Server(httpServer);
 
   io.on("connection", (socket) => {
-    console.log("Client connected");
+    console.log("A user connected");
 
-    socket.emit("queueUpdated", queue);
+    socket.on(Events.Client.RequestTicket, async () => {
+      const ticket = await createTicket();
+      socket.emit(Events.Server.TicketIssued, ticket);
 
-    socket.on("requestTicket", () => {
-      const ticket = currentTicket++;
-      queue.push(ticket);
-      socket.emit("ticketIssued", { ticket });
-      io.emit("queueUpdated", queue);
+      const queue = await getQueue();
+      io.emit(Events.Server.QueueUpdated, queue);
     });
 
-    socket.on("serveNextTicket", () => {
-      const ticket = queue.shift();
-      if (ticket !== undefined) {
-        socket.emit("ticketServed", ticket);
-        io.emit("queueUpdated", queue);
+    socket.on(Events.Client.ServeNextTicket, async () => {
+      const ticket = await serveNextTicket();
+
+      if (ticket) {
+        io.emit(Events.Server.TicketServed, ticket);
+        const queue = await getQueue();
+        io.emit(Events.Server.QueueUpdated, queue);
       }
     });
   });
