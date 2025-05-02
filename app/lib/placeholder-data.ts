@@ -17,7 +17,7 @@ export const banks: Bank[] = [
   },
 ];
 
-export const employees: Employee[] = [
+export const users: Employee[] = [
   {
     id: 1,
     email: "juan@afirme.com",
@@ -43,22 +43,22 @@ export const employees: Employee[] = [
 
 export const bankTellers: Omit<BankTeller, "id">[] = [
   {
-    employee_id: employees[0].id,
+    employee_id: users[0].id,
     bank_id: banks[0].id,     // Afirme
     window_number: 1,
   },
   {
-    employee_id: employees[1].id,
+    employee_id: users[1].id,
     bank_id: banks[0].id,     // Afirme
     window_number: 2,
   },
   {
-    employee_id: employees[2].id,
+    employee_id: users[2].id,
     bank_id: banks[1].id,   // BBVA
     window_number: 1,
   },
   {
-    employee_id: employees[3].id,
+    employee_id: users[3].id,
     bank_id: banks[1].id,     // BBVA
     window_number: 2,
   },

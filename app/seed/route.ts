@@ -1,4 +1,4 @@
-import { tickets, banks, employees, bankTellers } from "@/app/lib/placeholder-data";
+import { tickets, banks, users, bankTellers } from "@/app/lib/placeholder-data";
 import { sql } from "@/app/lib/utils";
 import bcrypt from "bcryptjs";
 
@@ -30,7 +30,7 @@ async function seedEmployees() {
         password TEXT NOT NULL
       );
     `;
-  for (const employee of employees) {
+  for (const employee of users) {
     const hashedPassword = await bcrypt.hash(employee.password, 10);
     await sql`
         INSERT INTO employees (id, email, password)
@@ -87,14 +87,13 @@ async function seedTickets() {
 export async function GET() {
   try {
 
-
     console.log("Seeding database...");
 
     // Drop in reverse dependency order
     await sql`DROP TABLE IF EXISTS tickets;`;
     await sql`DROP TABLE IF EXISTS bank_tellers;`;
-    await sql`DROP TABLE IF EXISTS employees;`;
     await sql`DROP TABLE IF EXISTS banks;`;
+    await sql`DROP TABLE IF EXISTS employees;`;
 
     // Create tables
     await seedBanks();

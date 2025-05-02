@@ -18,14 +18,14 @@ export type Bank = {
 };
 
 export type Employee = {
-  id: number;
+  id: string;
   email: string;
   password: string;
 };
 
 export type BankTeller = {
   id: number;
-  employee_id: number;    // FK to Employee.id
+  employee_id: string;    // FK to Employee.id
   bank_id: number;        // FK to Bank.id
   window_number: number;
 };

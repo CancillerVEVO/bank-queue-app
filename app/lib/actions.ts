@@ -5,11 +5,11 @@ import postgres from "postgres";
 import dotenv from "dotenv";
 dotenv.config();
 const sql = postgres(
-    process.env.POSTGRES_URL!, { ssl: false });
+  process.env.POSTGRES_URL!, { ssl: false });
 
 
 export async function createTicket(): Promise<Ticket> {
-    const [result] = await sql<Ticket[]>`
+  const [result] = await sql<Ticket[]>`
       INSERT INTO tickets (number, status)
       VALUES (
         (SELECT COALESCE(MAX(number), 0) + 1 FROM tickets),
@@ -17,7 +17,7 @@ export async function createTicket(): Promise<Ticket> {
       )
       RETURNING *;
     `;
-    return result;
+  return result;
 }
 
 
