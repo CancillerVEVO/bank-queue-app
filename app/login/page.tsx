@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import LoginForm from "@/app/ui/login-form";
+import LoginForm from "./login-form";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -13,6 +13,7 @@ export default function Page() {
             <div className="w-full max-w-md">
                 <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
                 <Suspense>
+
                     <LoginForm />
                 </Suspense>
             </div>

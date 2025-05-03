@@ -1,6 +1,6 @@
 "use server";
 import dotenv from "dotenv";
-import { Ticket } from "@/app/lib/definitions";
+import { Employee, Ticket } from "@/app/lib/definitions";
 import postgres from "postgres";
 dotenv.config();
 
@@ -12,4 +12,12 @@ export async function getQueue(): Promise<Ticket[]> {
       WHERE status = 'waiting'
       ORDER BY number ASC;
     `;
+}
+
+export async function getEmployee(email: string): Promise<Employee | null> {
+    const [employee] = await sql<Employee[]>`
+      SELECT * FROM employees
+      WHERE email = ${email};
+    `;
+    return employee ?? null;
 }
