@@ -23,7 +23,7 @@ export async function getEmployee(email: string): Promise<Employee | null> {
 }
 
 export async function getEmployeeContext(employee_id: number): Promise<EmployeeContext | null> {
-  const [ employee ] = await sql<EmployeeContext[]>`
+  const [employee] = await sql<EmployeeContext[]>`
     SELECT 
       e.id AS employee_id,
       e.email,
@@ -43,5 +43,12 @@ export async function getEmployeeContext(employee_id: number): Promise<EmployeeC
 
   return employee ?? null;
 
-  
-}  
+}
+
+export async function getBank(bankId: number): Promise<Bank | null> {
+  const [bank] = await sql<Bank[]>`
+      SELECT * FROM banks
+      WHERE id = ${bankId};
+    `;
+  return bank ?? null;
+}
