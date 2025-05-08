@@ -17,33 +17,34 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     notFound();
   }
 
-  {
-    /* */
-  }
-
   return (
-    <main className="flex items-center justify-center h-screen">
-      <div className="flex flex-col max-w-xl w-full gap-8 p-4 rounded-lg shadow-lg">
-      <div style={{ backgroundColor: bank.background_color }} className="flex items-center justify-center p-8 h-28 rounded-lg">
-        <Image
-          src={bank.image_url}
-          alt={`${bank.name} logo`}
-          width={300}
-          height={300}
-          className="w-[70%] h-full object-contain"
-        />
-      </div>
-      <p className="text-2xl text-black px-4">
-        Hola bienvenido a <strong>{bank.name}</strong>, aquí podrás solicitar un turno para ser atendido en ventanilla.
-
-      </p>
-
-      <button className="text-white p-4 rounded-lg text-2xl uppercase"
-        style={{ backgroundColor: bank.button_color }}
-      >
-        Solicitar turno
-      </button>
+    <main className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className="flex flex-col w-full max-w-sm md:max-w-xl gap-6 md:gap-8 p-6 md:p-8 bg-white rounded-2xl shadow-lg">
+        <div
+          style={{ backgroundColor: bank.background_color }}
+          className="flex items-center justify-center p-6 md:p-8 h-24 md:h-28 rounded-lg"
+        >
+          <Image
+            src={bank.image_url}
+            alt={`${bank.name} logo`}
+            width={300}
+            height={300}
+            className="w-[70%] h-full object-contain"
+          />
+        </div>
+  
+        <p className="text-lg md:text-2xl text-center text-black">
+          Hola, bienvenido a <strong>{bank.name}</strong>. Aquí podrás solicitar un turno para ser atendido en ventanilla.
+        </p>
+  
+        <button
+          className="text-white text-lg md:text-2xl uppercase py-3 px-6 rounded-lg w-full transition hover:brightness-110"
+          style={{ backgroundColor: bank.button_color }}
+        >
+          Solicitar turno
+        </button>
       </div>
     </main>
   );
+  
 }
