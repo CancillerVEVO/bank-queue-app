@@ -32,11 +32,12 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
             className="w-[70%] h-full object-contain"
           />
         </div>
-  
+
         <p className="text-lg md:text-2xl text-center text-black">
-          Hola, bienvenido a <strong>{bank.name}</strong>. Aquí podrás solicitar un turno para ser atendido en ventanilla.
+          Hola, bienvenido a <strong>{bank.name}</strong>. Aquí podrás solicitar
+          un turno para ser atendido en ventanilla.
         </p>
-  
+
         <button
           className="text-white text-lg md:text-2xl uppercase py-3 px-6 rounded-lg w-full transition hover:brightness-110"
           style={{ backgroundColor: bank.button_color }}
@@ -46,5 +47,4 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       </div>
     </main>
   );
-  
 }
