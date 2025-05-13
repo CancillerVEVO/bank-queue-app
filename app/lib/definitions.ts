@@ -4,6 +4,7 @@ export type Ticket = {
   id: number;
   number: number;
   status: TicketStatus;
+  bank_id: number | null; // FK to Bank.id
   created_at: string;
   updated_at: string;
   bank_teller_id: number | null; // FK to BankTeller.id

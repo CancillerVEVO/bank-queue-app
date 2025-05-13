@@ -67,8 +67,9 @@ async function seedTickets() {
   await sql`
       CREATE TABLE tickets (
         id SERIAL PRIMARY KEY,
-        number INTEGER UNIQUE NOT NULL,
+        number INTEGER NOT NULL,
         status TEXT NOT NULL CHECK (status IN ('waiting', 'serving', 'served')),
+        bank_id INTEGER REFERENCES banks(id),
         bank_teller_id INTEGER REFERENCES bank_tellers(id),
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
@@ -77,8 +78,8 @@ async function seedTickets() {
   // Seed tickets
   for (const ticket of tickets) {
     await sql`
-      INSERT INTO tickets (number, status, bank_teller_id)
-      VALUES (${ticket.number}, ${ticket.status}, ${ticket.bank_teller_id});
+      INSERT INTO tickets (number, status, bank_teller_id, bank_id)
+      VALUES (${ticket.number}, ${ticket.status}, ${ticket.bank_teller_id}, ${ticket.bank_id});
     `;
   }
 }

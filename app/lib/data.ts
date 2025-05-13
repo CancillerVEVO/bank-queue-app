@@ -14,6 +14,14 @@ export async function getQueue(): Promise<Ticket[]> {
     `;
 }
 
+export async function getQueueByBank(bankId: number): Promise<Ticket[]> {
+  return await sql<Ticket[]>`
+      SELECT * FROM tickets
+      WHERE status = 'waiting' AND bank_id = ${bankId}
+      ORDER BY number ASC;
+    `;
+}
+
 export async function getEmployee(email: string): Promise<Employee | null> {
   const [employee] = await sql<Employee[]>`
       SELECT * FROM employees

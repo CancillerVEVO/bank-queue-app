@@ -8,17 +8,19 @@ const sql = postgres(
   process.env.POSTGRES_URL!, { ssl: false });
 
 
-export async function createTicket(): Promise<Ticket> {
+export async function createTicket(bankId: number): Promise<Ticket> {
   const [result] = await sql<Ticket[]>`
-      INSERT INTO tickets (number, status)
-      VALUES (
-        (SELECT COALESCE(MAX(number), 0) + 1 FROM tickets),
-        'waiting'
-      )
-      RETURNING *;
-    `;
+    INSERT INTO tickets (number, status, bank_id)
+    VALUES (
+      (SELECT COALESCE(MAX(number), 0) + 1 FROM tickets WHERE bank_id = ${bankId}),
+      'waiting',
+      ${bankId}
+    )
+    RETURNING *;
+  `;
   return result;
 }
+
 
 
 export async function serveNextTicket(): Promise<Ticket | null> {

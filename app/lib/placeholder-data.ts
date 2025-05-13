@@ -65,7 +65,10 @@ export const bankTellers: Omit<BankTeller, "id">[] = [
 ];
 
 export const tickets: Omit<Ticket, "id" | "created_at" | "updated_at">[] = [
-  { number: 1, status: "waiting", bank_teller_id: null },
-  { number: 2, status: "waiting", bank_teller_id: null },
-  { number: 3, status: "waiting", bank_teller_id: null },
+  { number: 1, status: "waiting", bank_teller_id: null, bank_id: banks[0].id },
+  { number: 2, status: "waiting", bank_teller_id: null , bank_id: banks[0].id},
+  { number: 3, status: "waiting", bank_teller_id: null , bank_id: banks[0].id},
+  { number: 4, status: "waiting", bank_teller_id: null , bank_id: banks[1].id},
+  { number: 5, status: "waiting", bank_teller_id: null , bank_id: banks[1].id},
+  { number: 6, status: "waiting", bank_teller_id: null , bank_id: banks[1].id},
 ];

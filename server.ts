@@ -23,7 +23,7 @@ app.prepare().then(() => {
     console.log("A user connected");
 
     socket.on(Events.Client.RequestTicket, async () => {
-      const ticket = await createTicket();
+      const ticket = await createTicket(1);
       socket.emit(Events.Server.TicketIssued, ticket);
 
       const queue = await getQueue();

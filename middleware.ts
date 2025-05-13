@@ -3,13 +3,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "./app/lib/session";
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|banks).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|banks).*)"],
 };
 
 // Define tus rutas públicas aquí
-const publicRoutes = ["/", "/login", ""];
-const dynamicPublicRoutes = [/^\/queue\/[^/]+$/];
+const publicRoutes = ["/", "/login", "/seed"];
+const dynamicPublicRoutes = [
+  /^\/queue\/[^/]+$/,
+  /^\/bank\/[^/]+$/,
+  /^\/bank\/[^/]+\/queue$/,
+  /^\/bank\/[^/]+\/request-ticket$/,
+];
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
