@@ -1,9 +1,15 @@
 "use server";
 import dotenv from "dotenv";
-import { Employee, Ticket, BankTeller, Bank, EmployeeContext } from "@/app/lib/definitions";
+import {
+  Employee,
+  Ticket,
+  BankTeller,
+  Bank,
+  EmployeeContext,
+  TellerTicketInfo,
+} from "@/app/lib/definitions";
 import postgres from "postgres";
 dotenv.config();
-
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: false });
 export async function getQueue(): Promise<Ticket[]> {
@@ -30,7 +36,9 @@ export async function getEmployee(email: string): Promise<Employee | null> {
   return employee ?? null;
 }
 
-export async function getEmployeeContext(employee_id: number): Promise<EmployeeContext | null> {
+export async function getEmployeeContext(
+  employee_id: number
+): Promise<EmployeeContext | null> {
   const [employee] = await sql<EmployeeContext[]>`
     SELECT 
       e.id AS employee_id,
@@ -48,9 +56,7 @@ export async function getEmployeeContext(employee_id: number): Promise<EmployeeC
     WHERE e.id = ${employee_id};
   `;
 
-
   return employee ?? null;
-
 }
 
 export async function getBank(bankId: number): Promise<Bank | null> {
@@ -59,4 +65,49 @@ export async function getBank(bankId: number): Promise<Bank | null> {
       WHERE id = ${bankId};
     `;
   return bank ?? null;
+}
+
+export async function getTellersTicketInfoByBank(
+  bankId: number
+): Promise<TellerTicketInfo[]> {
+  const rows = await sql<TellerTicketInfo[]>`
+    SELECT
+      bt.id AS bank_teller_id,
+      bt.window_number,
+      e.id AS employee_id,
+      e.email,
+      b.id AS bank_id,
+      b.name AS bank_name,
+      b.image_url,
+      b.background_color,
+      b.button_color,
+
+      t_current.id AS current_ticket_id,
+      t_current.number AS current_ticket_number,
+      t_current.status AS current_ticket_status,
+      t_current.created_at AS current_ticket_created_at,
+
+      t_next.id AS next_ticket_id,
+      t_next.number AS next_ticket_number,
+      t_next.status AS next_ticket_status,
+      t_next.created_at AS next_ticket_created_at
+
+    FROM bank_tellers bt
+    JOIN employees e ON e.id = bt.employee_id
+    JOIN banks b ON b.id = bt.bank_id
+
+    LEFT JOIN tickets t_current ON t_current.bank_teller_id = bt.id AND t_current.status = 'serving'
+
+    LEFT JOIN LATERAL (
+      SELECT *
+      FROM tickets
+      WHERE status = 'waiting' AND bank_id = bt.bank_id
+      ORDER BY created_at ASC
+      LIMIT 1
+    ) t_next ON true
+
+    WHERE bt.bank_id = ${bankId};
+  `;
+
+  return rows;
 }

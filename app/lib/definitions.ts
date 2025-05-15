@@ -42,3 +42,25 @@ export type EmployeeContext = {
   background_color: string;
   button_color: string;
 };
+
+export type TellerTicketInfo = {
+  bank_teller_id: number;
+  window_number: number;
+  employee_id: number;
+  email: string;
+  bank_id: number;
+  bank_name: string;
+  image_url: string;
+  background_color: string;
+  button_color: string;
+
+  current_ticket_id: number | null;
+  current_ticket_number: number | null;
+  current_ticket_status: TicketStatus | null;
+  current_ticket_created_at: string | null;
+
+  next_ticket_id: number | null;
+  next_ticket_number: number | null;
+  next_ticket_status: TicketStatus | null;
+  next_ticket_created_at: string | null;
+};

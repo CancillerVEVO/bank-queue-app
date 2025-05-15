@@ -6,8 +6,8 @@ import { CreateTicketForm } from "./ui/CreateTickerForm";
 
 // Puedes exportar metadata si es necesario
 export const metadata: Metadata = {
-  title: "Turnos",
-  description: "Sistema de turnos",
+  title: "Solicitar Turno",
+  description: "Solicitar un turno para el banco",
 };
 
 export default async function Page({ params }: { params: { id: string } }) {
