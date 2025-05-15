@@ -7,11 +7,20 @@ type SideNavProps = {
   imageSrc: string;
   backgroundColor: string;
   activeColor: string;
+  email: string;
+  bankName: string;
 };
 
-export default function SideNav({ imageSrc, backgroundColor, activeColor }: SideNavProps) {
+export default function SideNav({
+  imageSrc,
+  backgroundColor,
+  activeColor,
+  email,
+  bankName,
+}: SideNavProps) {
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
+      {/* Logo */}
       <Link
         style={{ backgroundColor }}
         className="mb-2 flex items-end justify-start rounded-md p-4"
@@ -27,9 +36,21 @@ export default function SideNav({ imageSrc, backgroundColor, activeColor }: Side
           />
         </div>
       </Link>
+
+      {/* Información del usuario */}
+      <div className="mb-4 rounded-md bg-gray-100 p-3 text-xs text-gray-700">
+        <p className="mb-1">
+          <strong>Usuario:</strong> {email}
+        </p>
+        <p>
+          <strong>Banco:</strong> {bankName}
+        </p>
+      </div>
+
+      {/* Navegación y logout */}
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-        <NavLinks activeColor={activeColor}/>
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
+        <NavLinks activeColor={activeColor} />
+        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block" />
         <form
           action={async () => {
             "use server";

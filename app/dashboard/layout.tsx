@@ -1,8 +1,7 @@
 import { cookies } from "next/headers";
 import { decrypt } from "@/app/lib/session";
-import { getEmployeeContext } from "../lib/data";
-import { type EmployeeContext } from "../lib/definitions";
-import { EmployeeProvider } from "../contexts/EmployeeContext";
+import { getEmployeeContext } from "@/app/lib/data";
+import { type EmployeeContext } from "@/app/lib/definitions";
 import SideNav from "./ui/sidenav";
 
 export default async function Layout({
@@ -21,19 +20,17 @@ export default async function Layout({
   if (!employeeContext) return <div>Employee context not found.</div>;
 
   return (
-    <EmployeeProvider value={employeeContext}>
-      <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
-        <div className="w-full flex-none md:w-64">
-          <SideNav
-            imageSrc={employeeContext.image_url}
-            backgroundColor={employeeContext.background_color}
-            activeColor={employeeContext.button_color}
-          />
-        </div>
-        <div className="flex-grow p-6 md:overflow-y-auto md:p-12">
-          {children}
-        </div>
+    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+      <div className="w-full flex-none md:w-64">
+        <SideNav
+          imageSrc={employeeContext.image_url}
+          backgroundColor={employeeContext.background_color}
+          activeColor={employeeContext.button_color}
+          email={employeeContext.email}
+          bankName={employeeContext.bank_name}
+        />
       </div>
-    </EmployeeProvider>
+      <div className="flex-grow p-6 md:overflow-y-auto md:p-12">{children}</div>
+    </div>
   );
 }
