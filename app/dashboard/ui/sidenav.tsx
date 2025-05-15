@@ -6,14 +6,15 @@ import { logout } from "@/app/login/actions";
 type SideNavProps = {
   imageSrc: string;
   backgroundColor: string;
+  activeColor: string;
 };
 
-export default function SideNav({ imageSrc, backgroundColor }: SideNavProps) {
+export default function SideNav({ imageSrc, backgroundColor, activeColor }: SideNavProps) {
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
       <Link
         style={{ backgroundColor }}
-        className="mb-2 flex h-20 items-end justify-start rounded-md p-4 md:h-40"
+        className="mb-2 flex items-end justify-start rounded-md p-4"
         href="/"
       >
         <div className="w-32 text-white md:w-40">
@@ -27,7 +28,7 @@ export default function SideNav({ imageSrc, backgroundColor }: SideNavProps) {
         </div>
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-        <NavLinks />
+        <NavLinks activeColor={activeColor}/>
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
         <form
           action={async () => {

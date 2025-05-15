@@ -27,6 +27,7 @@ export default async function Layout({
           <SideNav
             imageSrc={employeeContext.image_url}
             backgroundColor={employeeContext.background_color}
+            activeColor={employeeContext.button_color}
           />
         </div>
         <div className="flex-grow p-6 md:overflow-y-auto md:p-12">

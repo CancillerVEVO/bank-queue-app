@@ -1,41 +1,46 @@
-'use client';
+"use client";
 import {
   UserGroupIcon,
   HomeIcon,
-  DocumentDuplicateIcon,
-} from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import clsx from 'clsx';
+    QueueListIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import clsx from "clsx";
 
-// Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
+interface NavLinkProps {
+    activeColor: string;
+}
+
 const links = [
-  { name: 'Home', href: '/dashboard', icon: HomeIcon },
+  { name: "Home", href: "/dashboard", icon: HomeIcon },
   {
-    name: 'Invoices',
-    href: '/dashboard/invoices',
-    icon: DocumentDuplicateIcon,
+    name: "Turnos",
+    href: "/dashboard/queue",
+    icon:  QueueListIcon,
   },
-  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
+  { name: "Empleados", href: "/dashboard/employees", icon: UserGroupIcon },
 ];
 
-export default function NavLinks() {
+export default function NavLinks({activeColor}: NavLinkProps) {
   const pathname = usePathname();
-  return (
+    return (
     <>
       {links.map((link) => {
         const LinkIcon = link.icon;
+        const isActive = pathname === link.href;
+
         return (
           <Link
             key={link.name}
             href={link.href}
             className={clsx(
-              'flex h-[49px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
+              "flex h-[49px] grow items-center justify-center gap-2 rounded-md p-3 text-sm font-medium hover:bg-sky-100 md:flex-none md:justify-start md:p-2 md:px-3",
               {
-                'bg-sky-99 text-blue-600': pathname === link.href,
-              },
+                "bg-gray-50 text-gray-900": !isActive,
+              }
             )}
+            style={isActive ? { backgroundColor: activeColor, color: "#fff" } : {}}
           >
             <LinkIcon className="w-6" />
             <p className="hidden md:block">{link.name}</p>
