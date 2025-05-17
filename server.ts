@@ -1,9 +1,15 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
-import { Events } from "@/app/lib/socket-events";
+import {
+  Events,
+  QueueUpdatedPayload,
+  TicketRequestedPayload,
+  RequestVisibleTicketsPayload,
+  RequestVisibleTicketsResponse,
+} from "@/app/lib/socket-events";
 import { createTicket, serveNextTicket } from "@/app/lib/actions";
-import { getQueue } from "@/app/lib/data";
+import { getTicketsByEmployeeId, getTicketsForTeller } from "@/app/lib/data";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -12,9 +18,6 @@ const port = 3000;
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
-let queue: number[] = [];
-let currentTicket = 1;
-
 app.prepare().then(() => {
   const httpServer = createServer(handler);
   const io = new Server(httpServer);
@@ -22,23 +25,32 @@ app.prepare().then(() => {
   io.on("connection", (socket) => {
     console.log("A user connected");
 
-    socket.on(Events.Client.RequestTicket, async () => {
-      const ticket = await createTicket(1);
-      socket.emit(Events.Server.TicketIssued, ticket);
+    socket.on(
+      Events.Client.RequestVisibleTickets,
+      async (payload: RequestVisibleTicketsPayload, callback) => {
+        const tickets = await getTicketsForTeller(
+          payload.bankId,
+          payload.bankTellerId
+        );
 
-      const queue = await getQueue();
-      io.emit(Events.Server.QueueUpdated, queue);
-    });
+        const response: RequestVisibleTicketsResponse = {
+          tickets,
+        };
 
-    socket.on(Events.Client.ServeNextTicket, async () => {
-      const ticket = await serveNextTicket();
-
-      if (ticket) {
-        io.emit(Events.Server.TicketServed, ticket);
-        const queue = await getQueue();
-        io.emit(Events.Server.QueueUpdated, queue);
+        callback(response);
       }
-    });
+    );
+
+    socket.on(
+      Events.Client.TicketRequested,
+      async (payload: TicketRequestedPayload, callback) => {
+        const ticket = await createTicket(payload.bankId);
+
+        io.emit(Events.Server.TicketCreated, { ticket });
+
+        callback({ ticket });
+      }
+    );
   });
 
   httpServer

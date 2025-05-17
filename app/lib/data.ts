@@ -111,3 +111,32 @@ export async function getTellersTicketInfoByBank(
 
   return rows;
 }
+
+export async function getTicketsByEmployeeId(
+  employeeId: number
+): Promise<Ticket[]> {
+  const rows = await sql<Ticket[]>`
+    SELECT tickets.*
+    FROM tickets
+    LEFT JOIN bank_tellers ON tickets.bank_teller_id = bank_tellers.id
+    WHERE bank_tellers.employee_id = ${employeeId}
+       OR tickets.bank_teller_id IS NULL
+    ORDER BY tickets.created_at ASC;
+  `;
+
+  return rows;
+}
+
+export async function getTicketsForTeller(
+  bankId: number,
+  bankTellerId: number
+): Promise<Ticket[]> {
+  const rows = await sql<Ticket[]>`
+    SELECT * FROM tickets
+    WHERE bank_id = ${bankId}
+      AND (bank_teller_id IS NULL OR bank_teller_id = ${bankTellerId})
+    ORDER BY created_at ASC;
+  `;
+
+  return rows;
+}

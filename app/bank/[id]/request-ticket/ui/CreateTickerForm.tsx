@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createTicket } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/app/contexts/SocketContext";
+import { Events, TicketRequestedResponse } from "@/app/lib/socket-events";
+import { Ticket } from "@/app/lib/definitions";
 
 export function CreateTicketForm({
   buttonColor,
@@ -14,12 +17,21 @@ export function CreateTicketForm({
   const [ticketNumber, setTicketNumber] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const socket = useSocket();
 
   async function handleCreateTicket() {
+    if (!socket) return;
+
     setLoading(true);
-    const ticket = await createTicket(bankId);
-    setTicketNumber(ticket.number);
-    setLoading(false);
+
+    socket.emit(
+      Events.Client.TicketRequested,
+      { bankId },
+      (response: TicketRequestedResponse) => {
+        setTicketNumber(response.ticket.number);
+        setLoading(false);
+      }
+    );
   }
 
   return (
@@ -35,9 +47,13 @@ export function CreateTicketForm({
 
       <div className="h-20 flex items-center justify-center rounded-lg border border-dashed border-gray-300">
         {ticketNumber ? (
-          <span className="text-3xl font-bold text-black">Turno #{ticketNumber}</span>
+          <span className="text-3xl font-bold text-black">
+            Turno #{ticketNumber}
+          </span>
         ) : (
-          <span className="text-gray-400 text-lg">Tu número aparecerá aquí</span>
+          <span className="text-gray-400 text-lg">
+            Tu número aparecerá aquí
+          </span>
         )}
       </div>
 
