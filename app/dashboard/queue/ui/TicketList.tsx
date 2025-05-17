@@ -1,9 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Events,
   RequestVisibleTicketsResponse,
+  CreateTicketPayload,
   TicketCreatedPayload,
+  AttendTicketResponse,
+  CancelTicketResponse,
+  TicketUpdatedPayload,
 } from "@/app/lib/socket-events";
 
 import { useSocket } from "@/app/contexts/SocketContext";
@@ -44,6 +48,56 @@ export default function TicketList({ bankId, bankTellerId }: Props) {
     };
   }, [socket]);
 
+  const updateTicket = useCallback((ticket: Ticket) => {
+    setTickets((prevTickets) =>
+      prevTickets.map((t) =>
+        t.id === ticket.id
+          ? {
+              ...t,
+              status: ticket.status,
+              bank_teller_id: ticket.bank_teller_id,
+            }
+          : t
+      )
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const onTicketUpdated = (payload: TicketUpdatedPayload) => {
+      updateTicket(payload.ticket);
+    };
+
+    socket.on(Events.Server.TicketUpdated, onTicketUpdated);
+
+    return () => {
+      socket.off(Events.Server.TicketUpdated, onTicketUpdated);
+    };
+  }, [socket, updateTicket]);
+
+  const onClickAttend = (ticket: Ticket) => {
+    if (!socket) return;
+
+    socket.emit(Events.Client.AttendTicket, {
+      ticketId: ticket.id,
+      bankTellerId,
+    });
+  };
+
+  const onClickCancel = (ticket: Ticket) => {
+    if (!socket) return;
+
+    socket.emit(Events.Client.CancelTicket, {
+      ticketId: ticket.id,
+      bankTellerId,
+    });
+  };
+
+  const isSomeAttending = useMemo(() => {
+    return tickets.some((ticket) => ticket.status === "serving" && ticket.bank_teller_id === bankTellerId);
+  }, [tickets]);
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">
@@ -62,6 +116,25 @@ export default function TicketList({ bankId, bankTellerId }: Props) {
               <strong>Asignado a:</strong>{" "}
               {ticket.bank_teller_id ?? "Sin asignar"}
             </p>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => onClickAttend(ticket)}
+                className="cursor-pointer mt-2 bg-blue-500 text-white py-1 px-3 rounded disabled:bg-gray-300"
+                disabled={isSomeAttending || ticket.status === 'serving'}
+              >
+                Atender
+              </button>
+
+              {ticket.status === "serving" && ticket.bank_teller_id === bankTellerId ? (
+                <button
+                  onClick={() => onClickCancel(ticket)}
+                  className="cursor-pointer mt-2 bg-red-500 text-white py-1 px-3 rounded disabled:bg-gray-300"
+                >
+                  Cancelar
+                </button>
+              ) : null}
+            </div>
           </li>
         ))}
       </ul>

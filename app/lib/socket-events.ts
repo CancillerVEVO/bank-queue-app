@@ -1,14 +1,12 @@
 import { Ticket } from "./definitions";
 
-// Client envia TicketRequested y Server responde con TicketCreated
+// Client
 
 export enum ClientToServerEvents {
   RequestVisibleTickets = "requestVisibleTickets", // nuevo nombre más claro
-  ServeNextTicket = "serveNextTicket",
-  AssignTicket = "assignTicket", // opcional si quieres permitir asignar
-  TicketCreated = "ticketCreated", // opcional si quieres permitir asignar
-
-  TicketRequested = "ticketRequested",
+  CreateTicket = "createTicket",
+  AttendTicket = "attendTicket",
+  CancelTicket = "cancelTicket",
 }
 export type RequestVisibleTicketsPayload = {
   bankId: number;
@@ -19,28 +17,44 @@ export type RequestVisibleTicketsResponse = {
   tickets: Ticket[];
 };
 
-export enum ServerToClientEvents {
-  QueueUpdated = "queueUpdated", // sigue igual, pero más claro en uso
-  TicketIssued = "ticketIssued",
-  TicketServed = "ticketServed",
+export type CreateTicketPayload = {
+  bankId: number;
+};
 
+export type CreateTicketResponse = {
+  ticket: Ticket;
+};
+
+export type AttendTicketPayload = {
+  ticketId: number;
+  bankTellerId: number;
+};
+
+export type AttendTicketResponse = {
+  ticket: Ticket;
+};
+
+export type CancelTicketPayload = {
+  ticketId: number;
+};
+
+export type CancelTicketResponse = {
+  ticket: Ticket;
+};
+
+// Server
+
+export enum ServerToClientEvents {
   TicketCreated = "ticketCreated",
+  TicketUpdated = "ticketUpdated",
 }
 
 export type TicketCreatedPayload = {
   ticket: Ticket;
 };
 
-export type TicketRequestedPayload = {
-  bankId: number;
-};
-
-export type TicketRequestedResponse = {
+export type TicketUpdatedPayload = {
   ticket: Ticket;
-};
-
-export type QueueUpdatedPayload = {
-  tickets: Ticket[];
 };
 
 export const Events = {

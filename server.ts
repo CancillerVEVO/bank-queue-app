@@ -3,13 +3,16 @@ import next from "next";
 import { Server } from "socket.io";
 import {
   Events,
-  QueueUpdatedPayload,
-  TicketRequestedPayload,
+  CreateTicketPayload,
   RequestVisibleTicketsPayload,
   RequestVisibleTicketsResponse,
+  TicketCreatedPayload,
+  CancelTicketPayload,
+  AttendTicketPayload,
+  TicketUpdatedPayload,
 } from "@/app/lib/socket-events";
-import { createTicket, serveNextTicket } from "@/app/lib/actions";
-import { getTicketsByEmployeeId, getTicketsForTeller } from "@/app/lib/data";
+import { createTicket, attendTicket, cancelTicket } from "@/app/lib/actions";
+import { getTicketsForTeller } from "@/app/lib/data";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -37,18 +40,49 @@ app.prepare().then(() => {
           tickets,
         };
 
-        callback(response);
+        callback?.(response);
       }
     );
 
     socket.on(
-      Events.Client.TicketRequested,
-      async (payload: TicketRequestedPayload, callback) => {
+      Events.Client.CreateTicket,
+      async (payload: CreateTicketPayload, callback) => {
         const ticket = await createTicket(payload.bankId);
 
-        io.emit(Events.Server.TicketCreated, { ticket });
+        io.emit(Events.Server.TicketCreated, {
+          ticket,
+        } satisfies TicketCreatedPayload);
 
-        callback({ ticket });
+        callback?.({ ticket });
+      }
+    );
+
+    socket.on(
+      Events.Client.AttendTicket,
+      async (payload: AttendTicketPayload, callback) => {
+        const ticket = await attendTicket({
+          ticketId: payload.ticketId,
+          bankTellerId: payload.bankTellerId,
+        });
+
+        io.emit(Events.Server.TicketUpdated, {
+          ticket: ticket!,
+        } satisfies TicketUpdatedPayload);
+
+        callback?.({ ticket });
+      }
+    );
+
+    socket.on(
+      Events.Client.CancelTicket,
+      async (payload: CancelTicketPayload, callback) => {
+        const ticket = await cancelTicket(payload.ticketId);
+
+        io.emit(Events.Server.TicketUpdated, {
+          ticket: ticket!,
+        } satisfies TicketUpdatedPayload);
+
+        callback?.({ ticket });
       }
     );
   });

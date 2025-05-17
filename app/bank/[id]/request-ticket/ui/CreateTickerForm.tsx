@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createTicket } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/app/contexts/SocketContext";
-import { Events, TicketRequestedResponse } from "@/app/lib/socket-events";
+import { Events, CreateTicketResponse } from "@/app/lib/socket-events";
 import { Ticket } from "@/app/lib/definitions";
 
 export function CreateTicketForm({
@@ -25,9 +25,9 @@ export function CreateTicketForm({
     setLoading(true);
 
     socket.emit(
-      Events.Client.TicketRequested,
+      Events.Client.CreateTicket,
       { bankId },
-      (response: TicketRequestedResponse) => {
+      (response: CreateTicketResponse) => {
         setTicketNumber(response.ticket.number);
         setLoading(false);
       }
