@@ -26,8 +26,8 @@ export type Employee = {
 
 export type BankTeller = {
   id: number;
-  employee_id: number;    // FK to Employee.id
-  bank_id: number;        // FK to Bank.id
+  employee_id: number; // FK to Employee.id
+  bank_id: number; // FK to Bank.id
   window_number: number;
 };
 
@@ -63,4 +63,19 @@ export type TellerTicketInfo = {
   next_ticket_number: number | null;
   next_ticket_status: TicketStatus | null;
   next_ticket_created_at: string | null;
+};
+
+export type ServedTicket = {
+  id: number;
+  number: number;
+  status: "served";
+  created_at: string; // o Date si haces parsing
+  updated_at: string; // o Date si haces parsing
+  window_number: number | null;
+  bank_name: string;
+};
+
+export type TicketStatusCount = {
+  status: TicketStatus;
+  count: string; // porque viene como texto desde PostgreSQL
 };

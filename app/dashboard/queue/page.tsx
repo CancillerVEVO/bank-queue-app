@@ -16,7 +16,6 @@ export default async function page() {
 
   return (
     <main>
-      <h1>QUEUE</h1>
       <TicketList
         bankId={employeeContext.bank_id}
         bankTellerId={employeeContext.bank_teller_id}

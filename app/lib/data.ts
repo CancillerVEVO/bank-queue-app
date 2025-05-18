@@ -7,6 +7,8 @@ import {
   Bank,
   EmployeeContext,
   TellerTicketInfo,
+  ServedTicket,
+  TicketStatusCount,
 } from "@/app/lib/definitions";
 import postgres from "postgres";
 dotenv.config();
@@ -139,4 +141,46 @@ export async function getTicketsForTeller(
   `;
 
   return rows;
+}
+
+
+export async function getTicketStatusDistribution(
+  bankId: number
+): Promise<TicketStatusCount[]> {
+  const rows = await sql<TicketStatusCount[]>`
+    SELECT status, COUNT(*)::text AS count
+    FROM tickets
+    WHERE bank_id = ${bankId}
+    GROUP BY status;
+  `;
+  return rows;
+}
+
+export async function getPaginatedServedTicketsByBank(
+  bankId: number,
+  limit: number,
+  offset: number
+): Promise<ServedTicket[]> {
+  return await sql<ServedTicket[]>`
+    SELECT 
+      tickets.id,
+      tickets.number,
+      tickets.updated_at,
+      bank_tellers.window_number,
+      banks.name as bank_name
+    FROM tickets
+    LEFT JOIN bank_tellers ON tickets.bank_teller_id = bank_tellers.id
+    LEFT JOIN banks ON tickets.bank_id = banks.id
+    WHERE tickets.status = 'served' AND tickets.bank_id = ${bankId}
+    ORDER BY tickets.updated_at DESC
+    LIMIT ${limit} OFFSET ${offset};
+  `;
+}
+
+export async function countServedTicketsByBank(bankId: number): Promise<number> {
+  const result = await sql<{ count: number }[]>`
+    SELECT COUNT(*)::int as count FROM tickets
+    WHERE status = 'served' AND bank_id = ${bankId};
+  `;
+  return result[0]?.count || 0;
 }

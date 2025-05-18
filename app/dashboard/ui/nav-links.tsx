@@ -19,7 +19,6 @@ const links = [
     href: "/dashboard/queue",
     icon:  QueueListIcon,
   },
-  { name: "Empleados", href: "/dashboard/employees", icon: UserGroupIcon },
 ];
 
 export default function NavLinks({activeColor}: NavLinkProps) {
