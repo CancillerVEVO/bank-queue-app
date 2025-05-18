@@ -51,7 +51,7 @@ export default function OperatorCard({ data }: Props) {
 
         if (
           prevData.current_ticket_id === ticket.id &&
-          ticket.status === "waiting"
+          (ticket.status === "waiting" || ticket.status === "served")
         ) {
           newData.current_ticket_created_at = null;
           newData.current_ticket_id = null;

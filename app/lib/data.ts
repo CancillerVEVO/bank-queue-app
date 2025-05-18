@@ -126,7 +126,6 @@ export async function getTicketsByEmployeeId(
 
   return rows;
 }
-
 export async function getTicketsForTeller(
   bankId: number,
   bankTellerId: number
@@ -134,6 +133,7 @@ export async function getTicketsForTeller(
   const rows = await sql<Ticket[]>`
     SELECT * FROM tickets
     WHERE bank_id = ${bankId}
+      AND status <> 'served'
       AND (bank_teller_id IS NULL OR bank_teller_id = ${bankTellerId})
     ORDER BY created_at ASC;
   `;

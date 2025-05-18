@@ -7,6 +7,8 @@ export enum ClientToServerEvents {
   CreateTicket = "createTicket",
   AttendTicket = "attendTicket",
   CancelTicket = "cancelTicket",
+  ServeTicket = "serverTicket",
+  RequestQueueByBank = "requestQueueByBank",
 }
 export type RequestVisibleTicketsPayload = {
   bankId: number;
@@ -40,6 +42,20 @@ export type CancelTicketPayload = {
 
 export type CancelTicketResponse = {
   ticket: Ticket;
+};
+
+export type ServeTicketPayload = {
+  tickeId: number;
+};
+export type ServeTicketResponse = {
+  ticket: Ticket;
+};
+
+export type RequestQueueByBankPayload = {
+  bankId: number;
+};
+export type RequestQueueByBankResponse = {
+  tickets: Ticket[];
 };
 
 // Server

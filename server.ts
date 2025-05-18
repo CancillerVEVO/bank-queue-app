@@ -10,9 +10,16 @@ import {
   CancelTicketPayload,
   AttendTicketPayload,
   TicketUpdatedPayload,
+  ServeTicketPayload,
+  RequestQueueByBankPayload,
 } from "@/app/lib/socket-events";
-import { createTicket, attendTicket, cancelTicket } from "@/app/lib/actions";
-import { getTicketsForTeller } from "@/app/lib/data";
+import {
+  createTicket,
+  attendTicket,
+  cancelTicket,
+  serveTicket,
+} from "@/app/lib/actions";
+import { getQueueByBank, getTicketsForTeller } from "@/app/lib/data";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -83,6 +90,30 @@ app.prepare().then(() => {
         } satisfies TicketUpdatedPayload);
 
         callback?.({ ticket });
+      }
+    );
+
+    socket.on(
+      Events.Client.ServeTicket,
+      async (payload: ServeTicketPayload, callback) => {
+        const ticket = await serveTicket(payload.tickeId);
+
+        io.emit(Events.Server.TicketUpdated, {
+          ticket: ticket!,
+        } satisfies TicketUpdatedPayload);
+
+        callback?.({ ticket });
+      }
+    );
+
+    socket.on(
+      Events.Client.RequestQueueByBank,
+      async (payload: RequestQueueByBankPayload, callback) => {
+        const tickets = await getQueueByBank(payload.bankId);
+
+        callback?.({
+          tickets,
+        } satisfies RequestVisibleTicketsResponse);
       }
     );
   });

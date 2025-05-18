@@ -3,10 +3,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Events,
   RequestVisibleTicketsResponse,
-  CreateTicketPayload,
   TicketCreatedPayload,
-  AttendTicketResponse,
-  CancelTicketResponse,
   TicketUpdatedPayload,
 } from "@/app/lib/socket-events";
 
@@ -51,7 +48,9 @@ export default function TicketList({ bankId, bankTellerId }: Props) {
   const updateTicket = useCallback((ticket: Ticket) => {
     setTickets((prevTickets) =>
       prevTickets.map((t) =>
-        t.id === ticket.id
+        t.id === ticket.id &&
+        (t.status !== ticket.status ||
+          t.bank_teller_id !== ticket.bank_teller_id)
           ? {
               ...t,
               status: ticket.status,
@@ -94,8 +93,39 @@ export default function TicketList({ bankId, bankTellerId }: Props) {
     });
   };
 
+  const onClickServe = (ticket: Ticket) => {
+    if (!socket) return;
+
+    socket.emit(
+      Events.Client.ServeTicket,
+      { tickeId: ticket.id, bankTellerId },
+      () => {
+        fetchTickets(); // refetch después de servir
+      }
+    );
+  };
+
+  const fetchTickets = useCallback(() => {
+    if (!socket) return;
+
+    socket.emit(
+      Events.Client.RequestVisibleTickets,
+      { bankId, bankTellerId },
+      (response: RequestVisibleTicketsResponse) => {
+        setTickets(response.tickets);
+      }
+    );
+  }, [socket, bankId, bankTellerId]);
+
+  useEffect(() => {
+    fetchTickets();
+  }, [fetchTickets]);
+
   const isSomeAttending = useMemo(() => {
-    return tickets.some((ticket) => ticket.status === "serving" && ticket.bank_teller_id === bankTellerId);
+    return tickets.some(
+      (ticket) =>
+        ticket.status === "serving" && ticket.bank_teller_id === bankTellerId
+    );
   }, [tickets]);
 
   return (
@@ -121,18 +151,27 @@ export default function TicketList({ bankId, bankTellerId }: Props) {
               <button
                 onClick={() => onClickAttend(ticket)}
                 className="cursor-pointer mt-2 bg-blue-500 text-white py-1 px-3 rounded disabled:bg-gray-300"
-                disabled={isSomeAttending || ticket.status === 'serving'}
+                disabled={isSomeAttending || ticket.status === "serving"}
               >
                 Atender
               </button>
+              {ticket.status === "serving" &&
+              ticket.bank_teller_id === bankTellerId ? (
+                <>
+                  <button
+                    onClick={() => onClickCancel(ticket)}
+                    className="cursor-pointer mt-2 bg-red-500 text-white py-1 px-3 rounded disabled:bg-gray-300"
+                  >
+                    Cancelar
+                  </button>
 
-              {ticket.status === "serving" && ticket.bank_teller_id === bankTellerId ? (
-                <button
-                  onClick={() => onClickCancel(ticket)}
-                  className="cursor-pointer mt-2 bg-red-500 text-white py-1 px-3 rounded disabled:bg-gray-300"
-                >
-                  Cancelar
-                </button>
+                  <button
+                    onClick={() => onClickServe(ticket)}
+                    className="cursor-pointer mt-2 bg-green-500 text-white py-1 px-3 rounded"
+                  >
+                    Marcar como atendido
+                  </button>
+                </>
               ) : null}
             </div>
           </li>

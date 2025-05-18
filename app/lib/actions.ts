@@ -35,11 +35,20 @@ export async function attendTicket({
   return ticket ?? null;
 }
 
-
 export async function cancelTicket(ticketId: number): Promise<Ticket | null> {
   const [ticket] = await sql<Ticket[]>`
     UPDATE tickets
     SET status = 'waiting', bank_teller_id = NULL, updated_at = NOW()
+    WHERE id = ${ticketId}
+    RETURNING *;
+  `;
+  return ticket ?? null;
+}
+
+export async function serveTicket(ticketId: number): Promise<Ticket | null> {
+  const [ticket] = await sql<Ticket[]>`
+    UPDATE tickets
+    SET status = 'served', updated_at = NOW()
     WHERE id = ${ticketId}
     RETURNING *;
   `;

@@ -1,14 +1,11 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  getBank,
-  getQueueByBank,
-  getTellersTicketInfoByBank,
-} from "@/app/lib/data"; // Ajusta según la ruta real de tus funciones
-import TicketCard from "@/app/ui/tickets/TicketCard";
-import OperatorCard from "@/app/ui/tickets/OperatorCard";
+import { getBank, getTellersTicketInfoByBank } from "@/app/lib/data"; // Ajusta según la ruta real de tus funciones
+import TicketCard from "@/app/bank/[id]/queue/ui/TicketCard";
+import OperatorCard from "@/app/bank/[id]/queue/ui/OperatorCard";
 import Link from "next/link";
 import Image from "next/image";
+import WaitingQueue from "./ui/WaitingQueue";
 
 export const metadata: Metadata = {
   title: "Fila de Turnos",
@@ -30,8 +27,6 @@ export default async function QueuePage({
     notFound();
   }
 
-  // Cargar la cola de turnos asociados a este banco
-  const queue = await getQueueByBank(bankId);
   const operators = await getTellersTicketInfoByBank(bankId);
 
   return (
@@ -87,17 +82,7 @@ export default async function QueuePage({
           <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
             Turnos en espera
           </h2>
-          {queue.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {queue.map((ticket) => (
-                <TicketCard key={ticket.id} ticket={ticket} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 text-lg">
-              No hay turnos en espera.
-            </p>
-          )}
+          <WaitingQueue bankId={bankId} />
         </section>
       </div>
     </main>
