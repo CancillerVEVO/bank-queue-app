@@ -6,7 +6,6 @@ import { Ticket } from "@/app/lib/definitions";
 import {
   Events,
   RequestQueueByBankResponse,
-  TicketUpdatedPayload,
 } from "@/app/lib/socket-events";
 import TicketCard from "./TicketCard";
 
@@ -37,7 +36,7 @@ export default function WaitingQueue({ bankId }: Props) {
   useEffect(() => {
     if (!socket) return;
 
-    const onTicketUpdated = (payload: TicketUpdatedPayload) => {
+    const onTicketUpdated = () => {
       // Refetch toda la lista si hay un cambio
       fetchQueue();
     };

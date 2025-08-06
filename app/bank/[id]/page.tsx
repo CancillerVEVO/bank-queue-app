@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
-const metadata: Metadata = {
+export const metadata: Metadata = {
   title: "Menu de Turnos",
   description: "Sistema de turnos",
 };

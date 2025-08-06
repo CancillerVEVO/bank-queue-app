@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getBank, getTellersTicketInfoByBank } from "@/app/lib/data"; // Ajusta según la ruta real de tus funciones
-import TicketCard from "@/app/bank/[id]/queue/ui/TicketCard";
 import OperatorCard from "@/app/bank/[id]/queue/ui/OperatorCard";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,11 +11,8 @@ export const metadata: Metadata = {
   description: "Lista de turnos en espera",
 };
 
-export default async function QueuePage({
-  params,
-}: {
-  params: { id: string };
-}) {
+type Props = { params: Promise<{ id: string }> };
+export default async function QueuePage({ params }: Props) {
   // Convertir el parámetro dinámico a number
   const { id } = await params;
   const bankId = parseInt(id);

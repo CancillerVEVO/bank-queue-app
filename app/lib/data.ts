@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import {
   Employee,
   Ticket,
-  BankTeller,
   Bank,
   EmployeeContext,
   TellerTicketInfo,
@@ -143,7 +142,6 @@ export async function getTicketsForTeller(
   return rows;
 }
 
-
 export async function getTicketStatusDistribution(
   bankId: number
 ): Promise<TicketStatusCount[]> {
@@ -177,7 +175,9 @@ export async function getPaginatedServedTicketsByBank(
   `;
 }
 
-export async function countServedTicketsByBank(bankId: number): Promise<number> {
+export async function countServedTicketsByBank(
+  bankId: number
+): Promise<number> {
   const result = await sql<{ count: number }[]>`
     SELECT COUNT(*)::int as count FROM tickets
     WHERE status = 'served' AND bank_id = ${bankId};

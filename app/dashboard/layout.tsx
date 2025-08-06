@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { decrypt } from "@/app/lib/session";
 import { getEmployeeContext } from "@/app/lib/data";
-import { type EmployeeContext } from "@/app/lib/definitions";
 import SideNav from "./ui/sidenav";
 
 export default async function Layout({

@@ -1,15 +1,11 @@
 "use client";
-import {
-  UserGroupIcon,
-  HomeIcon,
-    QueueListIcon,
-} from "@heroicons/react/24/outline";
+import { HomeIcon, QueueListIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
 interface NavLinkProps {
-    activeColor: string;
+  activeColor: string;
 }
 
 const links = [
@@ -17,13 +13,13 @@ const links = [
   {
     name: "Turnos",
     href: "/dashboard/queue",
-    icon:  QueueListIcon,
+    icon: QueueListIcon,
   },
 ];
 
-export default function NavLinks({activeColor}: NavLinkProps) {
+export default function NavLinks({ activeColor }: NavLinkProps) {
   const pathname = usePathname();
-    return (
+  return (
     <>
       {links.map((link) => {
         const LinkIcon = link.icon;
@@ -39,7 +35,9 @@ export default function NavLinks({activeColor}: NavLinkProps) {
                 "bg-gray-50 text-gray-900": !isActive,
               }
             )}
-            style={isActive ? { backgroundColor: activeColor, color: "#fff" } : {}}
+            style={
+              isActive ? { backgroundColor: activeColor, color: "#fff" } : {}
+            }
           >
             <LinkIcon className="w-6" />
             <p className="hidden md:block">{link.name}</p>

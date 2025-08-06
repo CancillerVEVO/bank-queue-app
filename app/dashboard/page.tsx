@@ -7,7 +7,6 @@ import {
   getTicketStatusDistribution,
 } from "@/app/lib/data";
 import ServedTicketTable from "./ui/ServedTicketTable";
-import { headers } from "next/headers";
 import PaginationMenu from "./ui/PaginationMenu";
 import TicketDistributionBarChart from "./ui/TicketDistributionBarChart";
 

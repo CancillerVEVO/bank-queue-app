@@ -10,7 +10,7 @@ const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }).trim(),
     password: z.string().trim()
 });
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function login(prevState: any, formData: FormData) {
     const result = loginSchema.safeParse(Object.fromEntries(formData));
 

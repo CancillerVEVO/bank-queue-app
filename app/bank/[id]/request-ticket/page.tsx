@@ -9,9 +9,11 @@ export const metadata: Metadata = {
   title: "Solicitar Turno",
   description: "Solicitar un turno para el banco",
 };
-
-export default async function Page({ params }: { params: { id: string } }) {
-  const {id}= await params;
+type Props = {
+  params: Promise<{ id: string }>;
+};
+export default async function Page({ params }: Props) {
+  const { id } = await params;
   const bank = await getBank(Number(id));
   if (!bank) {
     notFound();

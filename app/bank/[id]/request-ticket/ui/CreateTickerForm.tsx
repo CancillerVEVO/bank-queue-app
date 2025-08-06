@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createTicket } from "@/app/lib/actions";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/app/contexts/SocketContext";
 import { Events, CreateTicketResponse } from "@/app/lib/socket-events";
-import { Ticket } from "@/app/lib/definitions";
 
 export function CreateTicketForm({
   buttonColor,

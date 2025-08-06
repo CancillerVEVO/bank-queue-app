@@ -126,7 +126,7 @@ export default function TicketList({ bankId, bankTellerId }: Props) {
       (ticket) =>
         ticket.status === "serving" && ticket.bank_teller_id === bankTellerId
     );
-  }, [tickets]);
+  }, [tickets, bankTellerId]);
 
   return (
     <div>
